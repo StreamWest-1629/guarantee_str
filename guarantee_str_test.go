@@ -25,7 +25,7 @@ import (
 func Example() {
 
 	// number regular expression
-	regex := regexp.MustCompile("([0-9]|[1-9][0-9]+)")
+	regex := regexp.MustCompile("([1-9][0-9]+|[0-9])")
 	filter := guarantee_str.MakeRegexpFilter(regex)
 
 	numberStr := filter.MustMakeGuarantee("19")
