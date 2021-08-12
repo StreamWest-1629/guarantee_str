@@ -81,6 +81,11 @@ func (filter *StringFilter) MakeGuarantee(checkStr string) (guaranteed *Guarante
 	}
 }
 
+// Make new GuaranteeStr instance. If src argument's string value is invalid for this filter, this function occers error.
+func (filter *StringFilter) ChangeGuarantee(src *GuaranteeStr) (converted *GuaranteeStr, err error) {
+	return filter.MakeGuarantee(src.guaranteed)
+}
+
 // Check whether instance is initialized or not.
 func (str *GuaranteeStr) IsInitialized() bool {
 	return str.isInited
