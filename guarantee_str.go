@@ -25,7 +25,7 @@ type FilterRule func(checkStr string) error
 func (fn FilterRule) MakeFilter() *StringFilter {
 	return &StringFilter{
 		stringFilter: &stringFilter{
-			Filter: fn,
+			filter: fn,
 		},
 	}
 }
@@ -37,7 +37,7 @@ type StringFilter struct {
 }
 
 type stringFilter struct {
-	Filter FilterRule
+	filter FilterRule
 }
 
 // Contains string value guaranteed to be valid value.
@@ -68,7 +68,7 @@ func (filter *StringFilter) MustMakeGuarantee(checkStr string) (guaranteed *Guar
 
 // Make new GuaranteeStr instance. If checkStr is invalid value, this function occers error.
 func (filter *StringFilter) MakeGuarantee(checkStr string) (guaranteed *GuaranteeStr, err error) {
-	if err := filter.Filter(checkStr); err != nil {
+	if err := filter.filter(checkStr); err != nil {
 		return nil, err
 	} else {
 		return &GuaranteeStr{
@@ -125,7 +125,7 @@ func (dest *GuaranteeStr) MakeGuarantee(checkStr string) (newInstance *Guarantee
 // Check whether checkStr argument is valid value and Assign string value to instance.
 // If is checkStr is valid value, this function returns nil. If not, it returns error.
 func (dest *GuaranteeStr) AssignString(checkStr string) error {
-	if err := dest.Filter(checkStr); err != nil {
+	if err := dest.filter(checkStr); err != nil {
 		return err
 	} else {
 		dest.guaranteed = checkStr
@@ -144,5 +144,18 @@ func (str *GuaranteeStr) CloneString() (string, error) {
 		return string(buffer), nil
 	} else {
 		return "", errors.New("this instance isn't initialized yet")
+	}
+}
+
+// Clone string value from instance.
+// returned string value is guaranteed to be valid value.
+// If instance isn't initialized yet, this function returns empty string.
+func (str *GuaranteeStr) MustCloneString() string {
+	if str.isInited {
+		buffer := make([]byte, len(str.guaranteed))
+		copy(buffer, []byte(str.guaranteed))
+		return string(buffer)
+	} else {
+		return ""
 	}
 }
