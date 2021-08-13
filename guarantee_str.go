@@ -67,6 +67,7 @@ type guaranteeStr struct {
 	isInited   bool   // whether assigned valid str
 }
 
+// Check string value is valid value or not using internal filter.
 func (filter *StringFilter) Filter(checkStr string) error {
 	return filter.filter(checkStr)
 }
