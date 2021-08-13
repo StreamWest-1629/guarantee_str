@@ -30,6 +30,22 @@ func (fn FilterRule) MakeFilter() *StringFilter {
 	}
 }
 
+// Make StringFilter instance with all filter show valid.
+func (fn FilterRule) And(rules ...FilterRule) FilterRule {
+	return func(checkStr string) error {
+		if err := fn(checkStr); err != nil {
+			return err
+		} else {
+			for _, rule := range rules {
+				if err := rule(checkStr); err != nil {
+					return err
+				}
+			}
+		}
+		return nil
+	}
+}
+
 // Definates rule whether string value is valid value or not.
 // Uses GuaranteeStr's validate.
 type StringFilter struct {
@@ -49,6 +65,15 @@ type guaranteeStr struct {
 	*StringFilter
 	guaranteed string // contains filtered string value
 	isInited   bool   // whether assigned valid str
+}
+
+func (filter *StringFilter) Filter(checkStr string) error {
+	return filter.filter(checkStr)
+}
+
+// Make new StringFilter add FilterRule functions.
+func (filter *StringFilter) AndRule(rules ...FilterRule) *StringFilter {
+	return filter.filter.And(rules...).MakeFilter()
 }
 
 // Make new GuaranteeStr empty instance. If checkStr is invalid value, returns un-initialized instance.
