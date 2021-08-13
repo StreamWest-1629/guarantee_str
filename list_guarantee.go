@@ -1,0 +1,41 @@
+// list_guarantee.go
+// Copyright (C) 2021 Kasai Koji
+
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+
+// 	http://www.apache.org/licenses/LICENSE-2.0
+
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package guarantee_str
+
+import "errors"
+
+type list_exist map[string]interface{}
+
+func (r list_exist) Filter(checkStr string) error {
+	if _, exist := r[checkStr]; !exist {
+		return errors.New("list don't have same value")
+	} else {
+		return nil
+	}
+}
+
+// Make new filter with whether list has matching value or not.
+// Internal function, convert from slice to map for searching quickly.
+func MakeSliceListFilter(list []string) *StringFilter {
+
+	mapping := list_exist{}
+
+	for _, str := range list {
+		mapping[str] = nil
+	}
+
+	return (FilterRule)(mapping.Filter).MakeFilter()
+}
